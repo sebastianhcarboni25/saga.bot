@@ -99,7 +99,7 @@ def handle_message(event):
             language = lang
             break
     
-     if "nabeshima" in user_msg or "history" in user_msg:
+    if "nabeshima" in user_msg or "history" in user_msg:
         reply = history_facts[language]
     elif "restaurant" in user_msg or "eat" in user_msg or "food" in user_msg:
         reply = get_restaurants("Saga", lang=language[:2])
