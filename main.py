@@ -10,13 +10,15 @@ from linebot.v3.exceptions import InvalidSignatureError
 from linebot.v3.webhooks import (
     MessageEvent, TextMessageContent, LocationMessageContent
 )
+from linebot.v3 import ApiClient  # <-- Important fix
 
 # Setup Flask app
 app = Flask(__name__)
 
 # LINE API configuration
 config = Configuration(access_token=os.environ["LINE_CHANNEL_ACCESS_TOKEN"])
-line_bot_api = MessagingApi(configuration=config)
+api_client = ApiClient(config)  # Wrap configuration in ApiClient
+line_bot_api = MessagingApi(api_client)
 handler = WebhookHandler(os.environ["LINE_CHANNEL_SECRET"])
 GOOGLE_API_KEY = os.environ["GOOGLE_API_KEY"]
 
