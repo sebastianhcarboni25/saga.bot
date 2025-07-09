@@ -98,6 +98,36 @@ historical_figures = {
         "vi": "🔸 Nabeshima Naomasa: Người hiện đại hóa Saga thời Bakumatsu."
     }
 }
+shimada_saburo_info = {
+    "en": "💡 Shimada Saburō: A key engineer and politician who helped modernize Saga’s infrastructure in the Meiji period.",
+    "jp": "💡 島田三郎：明治時代に佐賀のインフラ整備に貢献した技術者・政治家。",
+    "cn": "💡 岛田三郎：明治时期的重要工程师和政治家，推动佐贺基础设施现代化。",
+    "kr": "💡 시마다 사부로 – 메이지 시대에 사가의 인프라를 발전시킨 기술자이자 정치인.",
+    "vi": "💡 Shimada Saburō: Kỹ sư và chính trị gia giúp hiện đại hóa cơ sở hạ tầng của Saga thời Minh Trị."
+}
+
+kingo_tatsuno_info = {
+    "en": "🏛️ Tatsuno Kingo: Renowned architect from Saga who designed Tokyo Station and introduced Western-style architecture to Japan.",
+    "jp": "🏛️ 辰野金吾：東京駅を設計した佐賀出身の著名な建築家。西洋建築を日本に導入した。",
+    "cn": "🏛️ 辰野金吾：来自佐贺的著名建筑师，设计了东京车站，将西式建筑带入日本。",
+    "kr": "🏛️ 다쓰노 킨고 – 도쿄역을 설계한 사가 출신의 유명 건축가. 서양식 건축을 일본에 도입함.",
+    "vi": "🏛️ Tatsuno Kingo: Kiến trúc sư nổi tiếng người Saga, thiết kế ga Tokyo và mang kiến trúc phương Tây đến Nhật Bản."
+}
+eto_shimpei_info = {
+    "en": "⚖️ Eto Shimpei: A visionary legal reformer from Saga who helped establish Japan’s modern legal system.",
+    "jp": "⚖️ 江藤新平：日本の近代的な法制度を築いた佐賀出身の法改革者。",
+    "cn": "⚖️ 江藤新平：来自佐贺的法律改革者，奠定了日本现代法制的基础。",
+    "kr": "⚖️ 에토 심페이 – 일본 근대 법체계를 만든 사가 출신의 법률 개혁가.",
+    "vi": "⚖️ Eto Shimpei: Người cải cách pháp luật xuất sắc từ Saga, góp phần xây dựng hệ thống pháp luật hiện đại của Nhật."
+}
+oe_taku_info = {
+    "en": "📚 Ōe Taku: A Saga-born intellectual and educator who contributed to Japan’s modernization through education and civil service.",
+    "jp": "📚 大江卓：佐賀出身の教育者・思想家。教育と官僚制度を通じて日本の近代化に貢献。",
+    "cn": "📚 大江卓：出生于佐贺的教育家和思想家，通过教育和公务体系推动日本现代化。",
+    "kr": "📚 오에 다쿠 – 사가 출신의 교육자 겸 사상가. 교육과 공무원 제도로 일본의 근대화를 이끔.",
+    "vi": "📚 Ōe Taku: Nhà giáo dục và trí thức người Saga, góp phần vào công cuộc hiện đại hóa Nhật Bản qua giáo dục và chính quyền."
+}
+
 
 seven_wise_men = {
     "okuma": {
