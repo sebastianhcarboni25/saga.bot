@@ -4,6 +4,32 @@ from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 import os
 import random
+import requests
+
+def get_restaurants(location, lang="en"):
+    api_key = os.environ["GOOGLE_API_KEY"]
+    endpoint = "https://maps.googleapis.com/maps/api/place/textsearch/json"
+    params = {
+        "query": f"restaurants near {location}",
+        "language": lang,
+        "key": api_key
+    }
+
+    response = requests.get(endpoint, params=params)
+    data = response.json()
+
+    if "results" not in data or not data["results"]:
+        return "Sorry, I couldn’t find any restaurants."
+
+    # Pick top 3 results
+    results = data["results"][:3]
+    reply = ""
+    for r in results:
+        name = r["name"]
+        address = r.get("formatted_address", "No address")
+        rating = r.get("rating", "No rating")
+        reply += f"🍽️ {name}\n⭐ {rating} | 📍 {address}\n\n"
+    return reply.strip()
 
 app = Flask(__name__)
 
@@ -72,11 +98,12 @@ def handle_message(event):
         if lang in user_msg:
             language = lang
             break
-
-    if "restaurant" in user_msg or "eat" in user_msg or "food" in user_msg:
-        reply = random.choice(restaurants[language])
-    elif "nabeshima" in user_msg or "history" in user_msg:
+    
+     if "nabeshima" in user_msg or "history" in user_msg:
         reply = history_facts[language]
+    elif "restaurant" in user_msg or "eat" in user_msg or "food" in user_msg:
+        reply = get_restaurants("Saga", lang=language[:2])
+
     else:
         reply = "Hi! 🌏 Type 'restaurant' or 'history', and add a language: english, japanese, korean, chinese."
 
