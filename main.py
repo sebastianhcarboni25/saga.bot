@@ -8,13 +8,12 @@ from linebot.v3.exceptions import InvalidSignatureError
 from linebot.v3.webhooks import MessageEvent, TextMessageContent, LocationMessageContent
 from linebot.v3.messaging.models import TextMessage
 
-# CORRECT INIT for SDK v3.x — no ApiClient needed!
-config = Configuration(access_token=os.environ["LINE_CHANNEL_ACCESS_TOKEN"])
-line_bot_api = MessagingApi(configuration=config)
-handler = WebhookHandler(os.environ["LINE_CHANNEL_SECRET"])
-GOOGLE_API_KEY = os.environ["GOOGLE_API_KEY"]
-
 app = Flask(__name__)
+
+config = Configuration(access_token=os.environ["LINE_CHANNEL_ACCESS_TOKEN"])
+line_bot_api = MessagingApi(config)
+handler = WebhookHandler(os.environ["LINE_CHANNEL_SECRET"])
+GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
 
 def get_nearby_restaurants(lat, lng):
     url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
@@ -24,8 +23,12 @@ def get_nearby_restaurants(lat, lng):
         "type": "restaurant",
         "key": GOOGLE_API_KEY,
     }
-
+    
     response = requests.get(url, params=params)
+    if response.status_code != 200:
+        print("Error:", response.status_code, response.text)
+        return "Error fetching restaurants."
+
     results = response.json().get("results", [])
     if not results:
         return "No restaurants found nearby."
@@ -41,7 +44,7 @@ def get_nearby_restaurants(lat, lng):
 
 @app.route("/callback", methods=["POST"])
 def callback():
-    signature = request.headers["X-Line-Signature"]
+    signature = request.headers.get("X-Line-Signature", "")
     body = request.get_data(as_text=True)
 
     try:
