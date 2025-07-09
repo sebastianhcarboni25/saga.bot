@@ -5,7 +5,7 @@ from linebot.v3.messaging import Configuration, MessagingApi
 from linebot.v3.webhook import WebhookHandler
 from linebot.v3.exceptions import InvalidSignatureError
 from linebot.v3.webhooks import MessageEvent, TextMessageContent
-from linebot.v3.messaging.models import TextMessage
+from linebot.v3.messaging.models import TextMessage, ReplyMessageRequest
 
 app = Flask(__name__)
 
@@ -115,12 +115,13 @@ def handle_message(event):
                 "Send keywords about restaurants or Saga history to get info.\n"
             )
 
-        line_bot_api.reply_message(
+        reply_request = ReplyMessageRequest(
             reply_token=event.reply_token,
-            messages=TextMessage(text=reply)
+            messages=[TextMessage(text=reply)]
         )
+
+        line_bot_api.reply_message(reply_request)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
-
