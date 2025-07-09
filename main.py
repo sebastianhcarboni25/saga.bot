@@ -22,105 +22,64 @@ def callback():
         handler.handle(body, signature)
     except InvalidSignatureError:
         abort(400)
-
     return "OK"
 
 @handler.add(MessageEvent)
 def handle_message(event):
-    message = event.message
-    if isinstance(message, TextMessageContent):
-        text = message.text.lower()
+    if not isinstance(event.message, TextMessageContent):
+        # Ignore non-text messages
+        return
 
-        if "nabeshima" in text or "나베시마" in text or "鍋島" in text:
-            reply = (
-                "나베시마 나오마사:\n"
-                "사가번의 초기 다이묘로, 영리한 군주이자 문화 후원자였습니다.\n\n"
-                "鍋島直正:\n"
-                "佐賀藩の初代大名であり、聡明な統治者かつ文化の支援者でした。\n\n"
-                "Nabeshima Naomasa:\n"
-                "The first lord of Saga Domain, known as a wise ruler and patron of culture.\n\n"
-                "鍋島直正：\n"
-                "佐賀藩の初代藩主であり、文化の後援者としても知られています。"
-            )
+    user_text = event.message.text.lower()
 
-        elif "okuma" in text or "오쿠마" in text or "大隈" in text:
-            reply = (
-                "오쿠마 시게노부:\n"
-                "일본 근대 정치의 선구자이자 와세다 대학 설립자입니다.\n\n"
-                "大隈重信:\n"
-                "日本近代政治の先駆者であり、早稲田大学の創立者です。\n\n"
-                "Okuma Shigenobu:\n"
-                "A pioneer of modern Japanese politics and founder of Waseda University.\n\n"
-                "大隈重信：\n"
-                "日本の近代政治の先駆者であり、早稲田大学の創設者です。"
-            )
-
-        elif "saga castle" in text or "사가성" in text or "佐賀城" in text:
-            reply = (
-                "사가성:\n"
-                "에도 시대에 세워진 사가 번의 중심 성곽입니다.\n\n"
-                "佐賀城:\n"
-                "江戸時代に建てられた佐賀藩の中心的な城郭です。\n\n"
-                "Saga Castle:\n"
-                "The central castle of the Saga Domain built during the Edo period.\n\n"
-                "佐賀城：\n"
-                "江戸時代に建てられた佐賀藩の中心的な城です。"
-            )
-
-        elif "balloon museum" in text or "벌룬 박물관" in text or "バルーンミュージアム" in text or "熱気球博物館" in text:
-            reply = (
-                "사가 벌룬 박물관:\n"
-                "열기구 축제와 관련된 전시와 체험을 제공하는 박물관입니다.\n\n"
-                "バルーンミュージアム:\n"
-                "熱気球祭りに関する展示や体験を提供する博物館です。\n\n"
-                "Saga Balloon Museum:\n"
-                "A museum offering exhibits and experiences related to the hot air balloon festival.\n\n"
-                "熱気球博物館：\n"
-                "熱気球祭りに関連した展示と体験ができます。"
-            )
-
-        elif "restaurant" in text:
-            reply = (
-                "여기 추천 식당 목록입니다:\n"
-                "1. 사쿠라 스시\n"
-                "2. 도쿄 라멘\n"
-                "3. 카레 하우스\n"
-                "4. 도시락 익스프레스\n"
-                "5. 우동 코너\n\n"
-                "这里是推荐的餐厅列表:\n"
-                "1. 樱花寿司\n"
-                "2. 东京拉面\n"
-                "3. 咖喱屋\n"
-                "4. 便当快递\n"
-                "5. 乌冬角落\n\n"
-                "おすすめのレストランリストです:\n"
-                "1. さくら寿司\n"
-                "2. 東京ラーメン\n"
-                "3. カレーハウス\n"
-                "4. 弁当エクスプレス\n"
-                "5. うどんコーナー\n\n"
-                "Here is the list of recommended restaurants:\n"
-                "1. Sakura Sushi\n"
-                "2. Tokyo Ramen\n"
-                "3. Curry House\n"
-                "4. Bento Express\n"
-                "5. Udon Corner\n"
-            )
-
-        else:
-            reply = (
-                "식당이나 사가 역사에 대해 알고 싶으면 관련 단어를 보내주세요.\n"
-                "如果您想了解餐厅或佐贺历史，请发送相关词汇。\n"
-                "レストランや佐賀の歴史について知りたい場合は、関連するキーワードを送ってください。\n"
-                "Send keywords about restaurants or Saga history to get info.\n"
-            )
-
-        reply_request = ReplyMessageRequest(
-            reply_token=event.reply_token,
-            messages=[TextMessage(text=reply)]
+    if any(word in user_text for word in ["nabeshima", "나베시마", "鍋島"]):
+        reply_text = (
+            "나베시마 나오마사:\n사가번 초기 다이묘이자 문화 후원자입니다.\n\n"
+            "鍋島直正:\n佐賀藩の初代大名で、文化の支援者でした。\n\n"
+            "Nabeshima Naomasa:\nFirst lord of Saga Domain and patron of culture."
+        )
+    elif any(word in user_text for word in ["okuma", "오쿠마", "大隈"]):
+        reply_text = (
+            "오쿠마 시게노부:\n일본 근대 정치의 선구자이자 와세다대 설립자입니다.\n\n"
+            "大隈重信:\n日本近代政治の先駆者で、早稲田大学の創立者です。\n\n"
+            "Okuma Shigenobu:\nPioneer of modern Japanese politics and founder of Waseda University."
+        )
+    elif any(word in user_text for word in ["saga castle", "사가성", "佐賀城"]):
+        reply_text = (
+            "사가성:\n에도 시대 사가 번의 중심 성곽입니다.\n\n"
+            "佐賀城:\n江戸時代の佐賀藩の中心的な城です。\n\n"
+            "Saga Castle:\nCentral castle of the Saga Domain from Edo period."
+        )
+    elif any(word in user_text for word in ["balloon museum", "벌룬 박물관", "バルーンミュージアム", "熱気球博物館"]):
+        reply_text = (
+            "사가 벌룬 박물관:\n열기구 축제 관련 전시와 체험이 있습니다.\n\n"
+            "バルーンミュージアム:\n熱気球祭りに関する展示と体験があります。\n\n"
+            "Saga Balloon Museum:\nMuseum featuring exhibits and experiences on the balloon festival."
+        )
+    elif "restaurant" in user_text or "식당" in user_text or "レストラン" in user_text or "餐厅" in user_text:
+        reply_text = (
+            "추천 식당:\n"
+            "1. 사쿠라 스시\n2. 도쿄 라멘\n3. 카레 하우스\n\n"
+            "推荐餐厅:\n"
+            "1. 樱花寿司\n2. 东京拉面\n3. 咖喱屋\n\n"
+            "おすすめレストラン:\n"
+            "1. さくら寿司\n2. 東京ラーメン\n3. カレーハウス\n\n"
+            "Recommended Restaurants:\n"
+            "1. Sakura Sushi\n2. Tokyo Ramen\n3. Curry House"
+        )
+    else:
+        reply_text = (
+            "사가 역사나 식당에 대해 알고 싶으면 관련 단어를 보내주세요.\n"
+            "佐賀の歴史やレストランについて知りたい場合は、関連するキーワードを送信してください。\n"
+            "如果想了解佐贺历史或餐厅，请发送相关关键词。\n"
+            "Send keywords about Saga history or restaurants for info."
         )
 
-        line_bot_api.reply_message(reply_request)
+    reply_request = ReplyMessageRequest(
+        reply_token=event.reply_token,
+        messages=[TextMessage(text=reply_text)]
+    )
+    line_bot_api.reply_message(reply_request)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
