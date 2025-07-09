@@ -89,7 +89,6 @@ best_places = {
 
 # Historical figures with multiple prompt keywords for each
 historical_figures = {
-    # keys are tuples of possible user input keywords
     ("nabeshima", "nabeshima naomasa"): {
         "en": "🔸 Nabeshima Naomasa: Modernized Saga during the Bakumatsu.",
         "jp": "🔸 鍋島直正：幕末に佐賀を近代化した大名。",
@@ -134,12 +133,10 @@ seven_wise_men = {
         "cn": "🏛️ 大隈重信：早稻田大学创始人，日本前首相。",
         "kr": "🏛️ 오쿠마 시게노부 – 와세다 대학 설립자, 일본 총리.",
         "vi": "🏛️ Okuma Shigenobu: Người sáng lập ĐH Waseda và Thủ tướng Nhật."
-    },
-    **# Reusing from historical_figures for these keys**
-    **# To avoid redundancy, you could merge or unify these if you want**
+    }
 }
 
-# For Saga Castle
+# Saga Castle info
 saga_castle_info = {
     "en": "🏯 Saga Castle: Originally built in 1602, now a history museum.",
     "jp": "🏯 佐賀城：1602年に築城。現在は歴史博物館です。",
@@ -148,7 +145,7 @@ saga_castle_info = {
     "vi": "🏯 Lâu đài Saga: Xây dựng năm 1602, nay là bảo tàng."
 }
 
-# New locations info added:
+# New locations: Saga Balloon Museum and Saga Shrine
 saga_balloon_museum = {
     "en": "🎈 Saga Balloon Museum: Discover the history and technology of hot air balloons in Saga.",
     "jp": "🎈 佐賀バルーンミュージアム：佐賀の熱気球の歴史と技術を学べます。",
@@ -166,8 +163,8 @@ saga_shrine_info = {
 }
 
 def detect_language(text):
-    # simple detection based on presence of language codes, fallback en
     text = text.lower()
+    # Simple heuristic detection based on keywords or characters
     if "jp" in text or "に" in text or "佐賀" in text:
         return "jp"
     elif "kr" in text or "사가" in text:
@@ -258,3 +255,4 @@ def handle_message(event):
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
+
