@@ -136,8 +136,15 @@ seven_wise_men = {
         "cn": "🏛️ 大隈重信：早稻田大学创始人，日本前首相。",
         "kr": "🏛️ 오쿠마 시게노부 – 와세다 대학 설립자, 일본 총리.",
         "vi": "🏛️ Okuma Shigenobu: Người sáng lập ĐH Waseda và Thủ tướng Nhật."
-    }
+    },
+    "shimada": shimada_saburo_info,
+    "tatsuno": kingo_tatsuno_info,
+    "kingo": kingo_tatsuno_info,
+    "eto": eto_shimpei_info,
+    "oe": oe_taku_info,
+    "taku": oe_taku_info
 }
+
 
 saga_castle_info = {
     "en": "🏯 Saga Castle: Originally built in 1602, now a history museum.",
@@ -176,6 +183,7 @@ def callback():
     return 'OK'
 
 @handler.add(MessageEvent, message=TextMessage)
+@handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     user_msg = event.message.text.lower()
     lang = detect_language(user_msg)
@@ -192,11 +200,15 @@ def handle_message(event):
                 if name in user_msg:
                     reply = historical_figures[name][lang]
                     break
+            else:
+                reply = "❓ I couldn't find info about that person."
         elif any(name in user_msg for name in seven_wise_men):
             for name in seven_wise_men:
                 if name in user_msg:
                     reply = seven_wise_men[name][lang]
                     break
+            else:
+                reply = "❓ I couldn't find info about that wise man."
         elif "castle" in user_msg or "saga castle" in user_msg:
             reply = saga_castle_info[lang]
         else:
