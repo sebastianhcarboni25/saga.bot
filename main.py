@@ -2,7 +2,7 @@ from flask import Flask, request, abort
 import os
 import requests
 
-# LINE SDK v3
+# LINE SDK v3 imports (correct paths!)
 from linebot.v3.messaging import MessagingApi, Configuration
 from linebot.v3.messaging.models import TextMessage
 from linebot.v3.webhook import WebhookHandler
@@ -10,19 +10,19 @@ from linebot.v3.exceptions import InvalidSignatureError
 from linebot.v3.webhooks import (
     MessageEvent, TextMessageContent, LocationMessageContent
 )
-from linebot.v3 import ApiClient  # <-- Important fix
+from linebot.v3.http_client import ApiClient  # ✅ CORRECTED PATH
 
-# Setup Flask app
+# Flask app
 app = Flask(__name__)
 
 # LINE API configuration
 config = Configuration(access_token=os.environ["LINE_CHANNEL_ACCESS_TOKEN"])
-api_client = ApiClient(config)  # Wrap configuration in ApiClient
+api_client = ApiClient(config)  # ✅ fixed: wrap config in correct ApiClient
 line_bot_api = MessagingApi(api_client)
 handler = WebhookHandler(os.environ["LINE_CHANNEL_SECRET"])
 GOOGLE_API_KEY = os.environ["GOOGLE_API_KEY"]
 
-# Google Places restaurant search
+# Google Places API search
 def get_nearby_restaurants(lat, lng):
     endpoint = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
     params = {
@@ -47,7 +47,7 @@ def get_nearby_restaurants(lat, lng):
 
     return message.strip()
 
-# LINE webhook endpoint
+# LINE webhook
 @app.route("/callback", methods=["POST"])
 def callback():
     signature = request.headers["X-Line-Signature"]
@@ -60,7 +60,7 @@ def callback():
 
     return "OK"
 
-# Handle text or location messages
+# Handle incoming messages
 @handler.add(MessageEvent)
 def handle_message(event):
     msg = event.message
@@ -85,7 +85,7 @@ def handle_message(event):
             [TextMessage(text=restaurant_list)]
         )
 
-# Render-compatible port binding
+# For Render port binding
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
