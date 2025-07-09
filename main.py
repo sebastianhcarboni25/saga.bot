@@ -4,11 +4,11 @@ import requests
 
 # LINE SDK v3
 from linebot.v3.messaging import MessagingApi, Configuration
+from linebot.v3.messaging.models import TextMessage
 from linebot.v3.webhook import WebhookHandler
 from linebot.v3.exceptions import InvalidSignatureError
-from linebot.v3.models import (
-    MessageEvent, TextMessage, TextSendMessage,
-    LocationMessage
+from linebot.v3.webhooks import (
+    MessageEvent, TextMessageContent, LocationMessageContent
 )
 
 # Setup Flask app
@@ -20,7 +20,7 @@ line_bot_api = MessagingApi(configuration=config)
 handler = WebhookHandler(os.environ["LINE_CHANNEL_SECRET"])
 GOOGLE_API_KEY = os.environ["GOOGLE_API_KEY"]
 
-# Get restaurants nearby using Google Places API
+# Google Places restaurant search
 def get_nearby_restaurants(lat, lng):
     endpoint = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
     params = {
@@ -33,11 +33,11 @@ def get_nearby_restaurants(lat, lng):
     response = requests.get(endpoint, params=params)
     data = response.json()
 
-    if "results" not in data or len(data["results"]) == 0:
+    if "results" not in data or not data["results"]:
         return "No restaurants found nearby."
 
     message = ""
-    for place in data["results"][:5]:  # Top 5 restaurants
+    for place in data["results"][:5]:
         name = place.get("name", "Unknown")
         rating = place.get("rating", "N/A")
         address = place.get("vicinity", "No address")
@@ -58,32 +58,32 @@ def callback():
 
     return "OK"
 
-# Message handling
+# Handle text or location messages
 @handler.add(MessageEvent)
 def handle_message(event):
-    msg_type = event.message.type
+    msg = event.message
 
-    if msg_type == "text":
-        user_message = event.message.text.lower()
+    if isinstance(msg, TextMessageContent):
+        user_message = msg.text.lower()
         if "restaurant" in user_message:
             reply = "📍 Please send your location to get nearby restaurant recommendations!"
         else:
             reply = "Hi! Send the word 'restaurant' and then share your location 📍 to get suggestions!"
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text=reply)
+            [TextMessage(text=reply)]
         )
 
-    elif msg_type == "location":
-        lat = event.message.latitude
-        lng = event.message.longitude
+    elif isinstance(msg, LocationMessageContent):
+        lat = msg.latitude
+        lng = msg.longitude
         restaurant_list = get_nearby_restaurants(lat, lng)
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text=restaurant_list)
+            [TextMessage(text=restaurant_list)]
         )
 
-# Render-friendly port binding
+# Render-compatible port binding
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))  # default for local
+    port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
